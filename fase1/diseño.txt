@@ -9,10 +9,11 @@ Integrantes:
 
 Lenguajes de Programación a usar:
 -Ensamblador x86, C++, C
+-Herramientas graficas de Netbeans
 
 Propuesta:
-1.
-2.
+1. 
+2. 
 3.
 4.
 5.
