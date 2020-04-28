@@ -1,0 +1,21 @@
+
+##El siguiente es el diseño propuesto por el Grupo 1 de trabajo, para el curso Proyecto Integrador de Arquitectura y ##Ensamblador CI0118.
+
+Integrantes:
+-Gianfranco Bagnarello Hernandez B70866
+-
+-
+-
+
+Lenguajes de Programación a usar:
+-Ensamblador x86, C++, C
+
+Propuesta:
+1.
+2.
+3.
+4.
+5.
+
+
+
