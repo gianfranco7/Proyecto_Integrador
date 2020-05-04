@@ -11,12 +11,7 @@ Lenguajes de Programación a usar:
 -Ensamblador x86, C++, C
 -Herramientas graficas de Netbeans
 
-Propuesta:
-1. 
-2. 
-3.
-4.
-5.
+Propuesta de el equipo para el mecanismo de intercambio de datos entre sensores y monitor.
 
 
 
