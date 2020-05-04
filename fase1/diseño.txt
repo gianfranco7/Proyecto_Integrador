@@ -1,5 +1,5 @@
-
-##El siguiente es el diseño propuesto por el Grupo 1 de trabajo, para el curso Proyecto Integrador de Arquitectura y ##Ensamblador CI0118.
+El siguiente es el diseño propuesto por el Grupo 1 de trabajo, para el curso Proyecto Integrador de Arquitectura y
+Ensamblador CI0118.
 
 Integrantes:
 -Gianfranco Bagnarello Hernandez B70866
@@ -7,20 +7,23 @@ Integrantes:
 -Jose Alexis Valerio Ramírez B77863
 -Jey Caleb Ruiz Pinel B36237
 
+
 Lenguajes de Programación a usar:
 -Ensamblador x86, C++, C
 -Herramientas graficas de QT CREATOR
 
 
-Propuesta del equipo para la arquitectura del monitor.
+Librerías a usar:
+
+
+Propuesta del equipo para la arquitectura del monitor:
 desplegarDatosDeSensor(identificadorDeSensor);
 desplegarAlerta(identificadorDeSensor);
 graficarLos5();
 graficarUnoEnEspecífico(identificadorDeSensor);
 
 
-
-Propuesta de el equipo para el mecanismo de intercambio de datos entre sensores y monitor.
+Propuesta de el equipo para el mecanismo de intercambio de datos entre sensores y monitor:
 5 variables de entrada, una para cada sensor, se van a guardar en un bloque de memoria. (struct)
 Comunicación entre monitor y sensores: Lectura de archivos de input constante que lea caracter por caracter
 en tiempo real.
