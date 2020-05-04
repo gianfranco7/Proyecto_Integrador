@@ -29,6 +29,14 @@ Comunicación entre monitor y sensores: Lectura de archivos de input constante q
 en tiempo real.
 
 
+Funciones en ensamblador: 
+leerDatos:
+almacenarDatos:
+calcularMínimo:
+calcularMáximo:
+calcularPromedio:
+
+
 
 
 
