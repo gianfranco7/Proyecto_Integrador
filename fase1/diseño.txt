@@ -5,7 +5,7 @@ Integrantes:
 -Gianfranco Bagnarello Hernandez B70866
 -Kevin  Vargas Ramírez B57600
 -Jose Alexis Valerio Ramírez B77863
--
+-Jey Caleb Ruiz Pinel B36237
 
 Lenguajes de Programación a usar:
 -Ensamblador x86, C++, C
