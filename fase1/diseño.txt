@@ -15,6 +15,10 @@ Lenguajes de Programación a usar:
 Propuesta del equipo para la arquitectura del monitor.
 
 Propuesta de el equipo para el mecanismo de intercambio de datos entre sensores y monitor.
+5 variables de entrada, una para cada sensor, se van a guardar en un bloque de memoria. (struct)
+Comunicación entre monitor y sensores: Lectura de archivos de input constante que lea caracter por caracter
+en tiempo real.
+
 
 
 
