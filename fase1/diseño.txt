@@ -3,7 +3,7 @@ Ensamblador CI0118.
 
 Integrantes:
 -Gianfranco Bagnarello Hernandez B70866
--Kevin  Vargas Ramírez B57600
+-Kevin Vargas Ramírez B57600
 -Jose Alexis Valerio Ramírez B77863
 -Jey Caleb Ruiz Pinel B36237
 
@@ -29,16 +29,13 @@ Comunicación entre monitor y sensores: Lectura de archivos de input constante q
 en tiempo real.
 
 
-Funciones en ensamblador: 
+Funciones en ensamblador para sensores: 
 leerDatos:
 almacenarDatos:
 calcularMínimo:
 calcularMáximo:
 calcularPromedio:
 
-
-
-
-
-
-
+Funciones en ensamblador para generación de datos para cada sensor:
+generarDatos:
+guardarDatos:
