@@ -9,7 +9,7 @@ Integrantes:
 
 Lenguajes de Programación a usar:
 -Ensamblador x86, C++, C
--Herramientas graficas de Netbeans
+-Herramientas graficas de QT CREATOR
 
 Propuesta de el equipo para el mecanismo de intercambio de datos entre sensores y monitor.
 
