@@ -6,12 +6,14 @@ extern double obtenerMinimo();
 extern double obtenerMaximo();
 extern void generarArchivo(int tipoArchivo);
 
-void main() {
+int main() {
     int tipoArchivo = 0;
     printf("Digite el tipo del archivo que desea generar ");
     scanf("%i", &tipoArchivo);
     printf("El tipo de archivo digitado es: %i\n", tipoArchivo);
     generarArchivo(tipoArchivo);
     printf("Archivo generado exitosamente");
+    
+    return 0;
 }
 
