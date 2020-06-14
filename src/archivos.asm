@@ -1,6 +1,11 @@
 SECTION .data
 
-nomArch db './sensorPulso.txt', 00h
+nom1 db './sensorPulso.txt', 00h
+nom2 db './sensorRitmo.txt', 00h
+nom3 db './sensorPresion.txt', 00h
+nom4 db './sensorTasaRespiratoria.txt', 00h
+nom5 db './sensorSaturacionOxigeno.txt', 00h
+
 
 SECTION .text
 
