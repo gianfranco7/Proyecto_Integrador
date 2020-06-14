@@ -38,25 +38,25 @@ generadorArchivos:
     int 80h          ;interrupcion del sistema
     jmp _posArchivo
 	
-    _sensorPulso:
+    _sensorRitmo:
     mov ebx, nom2    ;nombre del archivo
     mov eax, 8       ;SYS_CREAT es el system call 8
     int 80h          ;interrupcion del sistema
     jmp _posArchivo
 
-    _sensorPulso:
+    _sensorPresion:
     mov ebx, nom3    ;nombre del archivo
     mov eax, 8       ;SYS_CREAT es el system call 8
     int 80h          ;interrupcion del sistema
     jmp _posArchivo
 
-    _sensorPulso:
+    _sensorTasaRespiratoria:
     mov ebx, nom4    ;nombre del archivo
     mov eax, 8       ;SYS_CREAT es el system call 8
     int 80h          ;interrupcion del sistema
     jmp _posArchivo
 
-    _sensorPulso:
+    _sensorSaturacionOxigeno:
     mov ebx, nom5    ;nombre del archivo
     mov eax, 8       ;SYS_CREAT es el system call 8
     int 80h          ;interrupcion del sistema
@@ -71,6 +71,4 @@ generadorArchivos:
     mov esp,ebp
     pop ebp
     ret
-
-   
 
