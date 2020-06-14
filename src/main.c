@@ -4,12 +4,14 @@
 extern double obtenerPromedio();
 extern double obtenerMinimo();
 extern double obtenerMaximo();
-
+extern void generarArchivo(int tipoArchivo):
 
 void main() {
-    double radio, altura = 0;
-    printf("Digite el radio del cono ");
-    scanf("%lf", &radio);
-    printf("Los valores que ud digito son: %lf y %lf\n", radio, altura);
-    printf("El resultado del volumen de un cono con base circular de radio %lf y altura %lf  es: %lf\n", radio, altura, volumen_cono(radio,altura)); 
+    int tipoArchivo = 0;
+    printf("Digite el tipo del archivo que desea generar ");
+    scanf("%lf", &tipoArchivo);
+    printf("El tipo de archivo digitado es: %i\n", tipoArchivo);
+    generarArchivo(tipoArchivo);
+    printf("Archivo generado exitosamente");
 }
+
