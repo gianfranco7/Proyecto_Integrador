@@ -1,0 +1,12 @@
+tipoSensor\0unidades\0byteHorabyteMinutosbyteSegundos4bytesLectura
+
+00000000 \0 00000000 \0 00000000 11111111 22222222 333333333333333333333333333333333333333333
+ 
+(se representa sin espacios, el delimitador es la cant. de espacios leidos)
+
+tipoSensor: char array (1byte?)
+unidades: byte (1byte)
+hora: 8 bits (1byte
+minutos: 8 bits (1byte)
+segundos: 8 bits (1byte)
+lectura: 32 bits (4bytes)
