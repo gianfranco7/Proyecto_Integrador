@@ -5,7 +5,7 @@
 Integrantes:
 
 -Gianfranco Bagnarello Hernández B70866
--
+-Jose Alexis Valerio Ramírez B77863
 -
 -
 
