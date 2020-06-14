@@ -1,4 +1,0 @@
-1. Generador de numeros random entre 2 limites
-2. Sistema de escritura de numeros random en archivo circular en formato
-3. Lector de archivos circulares
-4. Interfaz
