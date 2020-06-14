@@ -4,7 +4,7 @@
 extern double obtenerPromedio();
 extern double obtenerMinimo();
 extern double obtenerMaximo();
-extern void generarArchivo(int tipoArchivo):
+extern void generarArchivo(int tipoArchivo);
 
 void main() {
     int tipoArchivo = 0;
