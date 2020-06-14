@@ -6,6 +6,6 @@ Integrantes:
 
 -Gianfranco Bagnarello Hernández B70866
 -Jose Alexis Valerio Ramírez B77863
--
--
+-Jey Caleb Ruiz Pinel B36237
+-Kevin Vargas Ramírez B57600
 
