@@ -46,8 +46,8 @@ double generadorRandoms(int choice){
 void main() {
     int tipoArchivo = 0;
     printf("Digite el tipo del archivo que desea generar ");
-    scanf("%i", &tipoArchivo);
-    printf("El tipo de archivo digitado es: %i\n", tipoArchivo);
+    scanf("%d", &tipoArchivo);
+    printf("El tipo de archivo digitado es: %d\n", tipoArchivo);
     generadorArchivos(tipoArchivo);
     printf("Archivo generado exitosamente");
 }
