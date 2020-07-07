@@ -73,18 +73,25 @@ generadorArchivos:
     mov ecx, 0o777              ;permisos para escribir/leer en archivo
     int 0x80
 
+    mov esi, [contador]
     mov [fd_out], eax           ;eax tiene el file descriptor
-    push edx                    ;le da parametro a funcion generadorRandoms
-    call generadorRandoms       ;procesa el parametro con generadorRandoms
-    fst qword[valor]            ;llama el resultado del coprocesador a valor
-    mov edx, 8                  
+    
+    _ciclo2:
+    push edx			        ;le da parametro a funcion generadorRandoms
+    call generadorRandoms 	    ;procesa el parametro con generadorRandoms
+    fst qword[valor]		    ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;tamanio a escribir
     mov ecx, valor              ;mover puntero de valor
-    mov ebx, [fd_out]           
+    mov ebx, [fd_out]           ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
-    mov eax, 6                  
-    mov ebx, [fd_out]           
+    dec esi
+    cmp esi, 0
+    jne _ciclo2
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;
     jmp _final                  ;termina la funcion
 
 
@@ -94,18 +101,25 @@ generadorArchivos:
     mov ecx, 0o777              ;permisos para escribir/leer en archivo
     int 0x80
 
+    mov esi, [contador]
     mov [fd_out], eax           ;eax tiene el file descriptor
-    push edx                    ;le da parametro a funcion generadorRandoms
-    call generadorRandoms       ;procesa el parametro con generadorRandoms
-    fst qword[valor]            ;llama el resultado del coprocesador a valor
-    mov edx, 8                  
+    
+    _ciclo3:
+    push edx			        ;le da parametro a funcion generadorRandoms
+    call generadorRandoms 	    ;procesa el parametro con generadorRandoms
+    fst qword[valor]		    ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;tamanio a escribir
     mov ecx, valor              ;mover puntero de valor
-    mov ebx, [fd_out]           
+    mov ebx, [fd_out]           ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
-    mov eax, 6                  
-    mov ebx, [fd_out]           
+    dec esi
+    cmp esi, 0
+    jne _ciclo3
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;
     jmp _final                  ;termina la funcion
 
 
@@ -115,18 +129,25 @@ generadorArchivos:
     mov ecx, 0o777              ;permisos para escribir/leer en archivo
     int 0x80
 
+    mov esi, [contador]
     mov [fd_out], eax           ;eax tiene el file descriptor
-    push edx                    ;le da parametro a funcion generadorRandoms
-    call generadorRandoms       ;procesa el parametro con generadorRandoms
-    fst qword[valor]            ;llama el resultado del coprocesador a valor
-    mov edx, 8                  
+    
+    _ciclo4:
+    push edx			        ;le da parametro a funcion generadorRandoms
+    call generadorRandoms 	    ;procesa el parametro con generadorRandoms
+    fst qword[valor]		    ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;tamanio a escribir
     mov ecx, valor              ;mover puntero de valor
-    mov ebx, [fd_out]           
+    mov ebx, [fd_out]           ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
-    mov eax, 6                  
-    mov ebx, [fd_out]           
+    dec esi
+    cmp esi, 0
+    jne _ciclo4
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;          
     jmp _final                  ;termina la funcion
 
 
@@ -136,18 +157,25 @@ generadorArchivos:
     mov ecx, 0o777              ;permisos para escribir/leer en archivo
     int 0x80
 
+    mov esi, [contador]
     mov [fd_out], eax           ;eax tiene el file descriptor
-    push edx                    ;le da parametro a funcion generadorRandoms
-    call generadorRandoms       ;procesa el parametro con generadorRandoms
-    fst qword[valor]            ;llama el resultado del coprocesador a valor
-    mov edx, 8                  
+    
+    _ciclo5:
+    push edx			        ;le da parametro a funcion generadorRandoms
+    call generadorRandoms 	    ;procesa el parametro con generadorRandoms
+    fst qword[valor]		    ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;tamanio a escribir
     mov ecx, valor              ;mover puntero de valor
-    mov ebx, [fd_out]           
+    mov ebx, [fd_out]           ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
-    mov eax, 6                  
-    mov ebx, [fd_out]           
+    dec esi
+    cmp esi, 0
+    jne _ciclo5
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;           
 
 	
     _final:
