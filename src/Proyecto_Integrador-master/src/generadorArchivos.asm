@@ -38,7 +38,7 @@ generadorArchivos:
     cmp edx, 5
     je _sensorSaturacionOxigeno
 
-    _sensorPulso:               ;genera el archivo
+    _sensorPulso:           
     mov eax, 8
     mov ebx, nom1               ;darle nombre al archivo
     mov ecx, 0o777              ;permisos para escribir/leer en archivo
@@ -60,27 +60,87 @@ generadorArchivos:
 
 
     _sensorRitmo:
-    mov ebx, nom2    ;nombre del archivo
-    mov eax, 8       ;SYS_CREAT es el system call 8
-    int 80h          ;interrupcion del sistema
-    jmp _final
+    mov eax, 8
+    mov ebx, nom2               ;darle nombre al archivo
+    mov ecx, 0o777              ;permisos para escribir/leer en archivo
+    int 0x80
+
+    mov [fd_out], eax           ;eax tiene el file descriptor
+    push edx                    ;le da parametro a funcion generadorRandoms
+    call generadorRandoms       ;procesa el parametro con generadorRandoms
+    fst qword[valor]            ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;
+    mov ecx, valor              ;mover puntero de valor
+    mov ebx, [fd_out]           ;
+    mov eax, 4                  ;SYS_WRITE
+    int 0x80
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;
+    jmp _final                  ;termina la funcion
+
 
     _sensorPresion:
-    mov ebx, nom3    ;nombre del archivo
-    mov eax, 8       ;SYS_CREAT es el system call 8
-    int 80h          ;interrupcion del sistema
-    jmp _final
+    mov eax, 8
+    mov ebx, nom3               ;darle nombre al archivo
+    mov ecx, 0o777              ;permisos para escribir/leer en archivo
+    int 0x80
+
+    mov [fd_out], eax           ;eax tiene el file descriptor
+    push edx                    ;le da parametro a funcion generadorRandoms
+    call generadorRandoms       ;procesa el parametro con generadorRandoms
+    fst qword[valor]            ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;
+    mov ecx, valor              ;mover puntero de valor
+    mov ebx, [fd_out]           ;
+    mov eax, 4                  ;SYS_WRITE
+    int 0x80
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;
+    jmp _final                  ;termina la funcion
+
 
     _sensorTasaRespiratoria:
-    mov ebx, nom4    ;nombre del archivo
-    mov eax, 8       ;SYS_CREAT es el system call 8
-    int 80h          ;interrupcion del sistema
-    jmp _final
+    mov eax, 8
+    mov ebx, nom4               ;darle nombre al archivo
+    mov ecx, 0o777              ;permisos para escribir/leer en archivo
+    int 0x80
+
+    mov [fd_out], eax           ;eax tiene el file descriptor
+    push edx                    ;le da parametro a funcion generadorRandoms
+    call generadorRandoms       ;procesa el parametro con generadorRandoms
+    fst qword[valor]            ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;
+    mov ecx, valor              ;mover puntero de valor
+    mov ebx, [fd_out]           ;
+    mov eax, 4                  ;SYS_WRITE
+    int 0x80
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;
+    jmp _final                  ;termina la funcion
+
 
     _sensorSaturacionOxigeno:
-    mov ebx, nom5    ;nombre del archivo
-    mov eax, 8       ;SYS_CREAT es el system call 8
-    int 80h          ;interrupcion del sistema
+    mov eax, 8
+    mov ebx, nom5               ;darle nombre al archivo
+    mov ecx, 0o777              ;permisos para escribir/leer en archivo
+    int 0x80
+
+    mov [fd_out], eax           ;eax tiene el file descriptor
+    push edx                    ;le da parametro a funcion generadorRandoms
+    call generadorRandoms       ;procesa el parametro con generadorRandoms
+    fst qword[valor]            ;llama el resultado del coprocesador a valor
+    mov edx, 8                  ;
+    mov ecx, valor              ;mover puntero de valor
+    mov ebx, [fd_out]           ;
+    mov eax, 4                  ;SYS_WRITE
+    int 0x80
+
+    mov eax, 6                  ;
+    mov ebx, [fd_out]           ;
+
 	
     _final:
     mov ebx, 0       ;codigo de salida
