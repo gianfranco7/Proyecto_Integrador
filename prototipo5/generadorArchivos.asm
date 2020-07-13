@@ -12,21 +12,25 @@ contador dw 300			;contador para la cantidad de lecturas a crear
 
 SECTION .bss
 
-fd_out RESB 8                   ;file descriptor
-valor RESB 8                    ;variable auxiliar para randoms float
-minuto RESB 4
-segundo RESB 4
+fd RESB 4    	                ;file descriptor
+valor RESB 4                    ;float(4bytes)
+minuto RESB 1
+segundo RESB 1
 
 SECTION .text
 
 global generadorArchivos
-extern generadorRandoms
 generadorArchivos:
 	
     ;prologo
     push ebp
     mov ebp,esp
     sub esp, 8
+    push eax
+    push ebx
+    push ecx
+    push edx
+    push esi
 
     ;crear archivo
     mov edx, [ebp+8]            ;parametro tipoArchivo
@@ -41,17 +45,17 @@ generadorArchivos:
     int 0x80
 
     mov esi, [contador]
-    mov [fd_out], eax           ;eax tiene el file descriptor
+    mov [fd], eax           ;eax tiene el file descriptor
     
     mov edx, 16                 ;tamano a escribir
     mov ecx, head1              ;mover puntero de valor
-    mov ebx, [fd_out]           ;le dice donde escribir
+    mov ebx, [fd]           ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
     
     mov edx, 4                  ;tamano a escribir
     mov ecx, unid1              ;mover puntero de valor
-    mov ebx, [fd_out]           ;le dice donde escribir
+    mov ebx, [fd]           ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
@@ -74,7 +78,7 @@ generadorArchivos:
     divsd xmm0, xmm1		;divide para generar un float con decimales diferentes de 0
     movsd [valor], xmm0		;resultado queda en valor
     mov eax, 4			;SYS_WRITE
-    mov ebx, [fd_out]		;file descriptor en ebx para que sepa donde escribir
+    mov ebx, [fd]		;file descriptor en ebx para que sepa donde escribir
     mov ecx, valor		;mover a ecx el puntero del valor a escribir
     mov edx, 4			;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			;SYS_INTERRUPT despues de cada escritura
@@ -84,7 +88,7 @@ generadorArchivos:
     jne _ciclo			;continue con el ciclo hasta que sea 0
 		
     mov eax, 6                  ;SYS_CLOSE
-    mov ebx, [fd_out]           ;le da el file descriptor para que sepa que file cerrar
+    mov ebx, [fd]               ;le da el file descriptor para que sepa que file cerrar
 	    
     jmp _final                  ;termina la funcion
 	
@@ -94,6 +98,11 @@ generadorArchivos:
     int 80h                     ;interrupcion del sistema
 
     ;epilogo
+    pop esi
+    pop edx
+    pop ecx
+    pop ebx
+    pop eax
     add esp, 8
     mov esp,ebp
     pop ebp
