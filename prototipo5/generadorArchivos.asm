@@ -4,22 +4,15 @@ nom1 db './sensorPulso.txt', 00h
 head1 db 'Sensor de pulso', 0ah, 00h
 unid1 db 'bpm', 0ah, 00h
 
-divisor db 1.02			;variable auxiliar para la division para generar floats
+divisor db 1.02	    		;variable auxiliar para la division para generar floats
 limiteSuperior1	db 150		;limite superior de rango para valores random
 limiteInferior1 db 40		;limite inferior de rango para valores random
-
-
-
-hora db 1			;hora 1
-contador dw 300			;contador para la cantidad de lecturas a crear
-limiteSuperiorMinSeg db 60 	
-limiteInferiorMinSeg db 0
+hora db 1			        ;hora 1
+contador dw 300			    ;contador para la cantidad de lecturas a crear
 SECTION .bss
 
 fd RESB 4    	                ;file descriptor
 valor RESB 4                    ;float(4bytes)
-minuto RESB 1
-segundo RESB 1
 
 SECTION .text
 
@@ -64,7 +57,6 @@ generadorArchivos:
 
 
     _ciclo:
-
     ;imprima hora
     mov eax, 4			
     mov ebx, [fd]
