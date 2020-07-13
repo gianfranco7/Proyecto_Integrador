@@ -8,6 +8,8 @@ divisor db 1.02			;variable auxiliar para la division para generar floats
 limiteSuperior1	db 150		;limite superior de rango para valores random
 limiteInferior1 db 40		;limite inferior de rango para valores random
 
+
+hora db 1			;hora 1
 contador dw 300			;contador para la cantidad de lecturas a crear
 
 SECTION .bss
@@ -36,7 +38,6 @@ generadorArchivos:
     mov edx, [ebp+8]            ;parametro tipoArchivo
     cmp edx, 1
     je _sensorPulso
-    cmp edx, 2
 
     _sensorPulso:           
     mov eax, 8
@@ -45,22 +46,34 @@ generadorArchivos:
     int 0x80
 
     mov esi, [contador]
-    mov [fd], eax           ;eax tiene el file descriptor
+    mov [fd], eax               ;eax tiene el file descriptor
     
     mov edx, 16                 ;tamano a escribir
     mov ecx, head1              ;mover puntero de valor
-    mov ebx, [fd]           ;le dice donde escribir
+    mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
     
     mov edx, 4                  ;tamano a escribir
     mov ecx, unid1              ;mover puntero de valor
-    mov ebx, [fd]           ;le dice donde escribir
+    mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
     _ciclo:
-       
+
+    ;imprima hora
+    mov eax, 4			
+    mov ebx, [fd]
+    mov ecx, [hora]
+    mov edx, 4
+   
+    ;imprima minuto
+
+    ;imprima segundo 
+
+
+    ;imprima floats
     _cicloInterno1:
     rdrand eax			;genera un random en eax
     cmp eax, [limiteSuperior1]	;compara con limite sup
