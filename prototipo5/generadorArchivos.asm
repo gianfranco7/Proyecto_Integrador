@@ -3,6 +3,7 @@ SECTION .data
 nom1 db './sensorPulso.txt', 00h
 head1 db 'Sensor de pulso', 0ah, 00h
 unid1 db 'bpm', 0ah, 00h
+delimitador db '\0', 00h
 
 divisor db 1.02	    		;variable auxiliar para la division para generar floats
 limiteSuperior1	db 150		;limite superior de rango para valores random
@@ -68,7 +69,14 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-   
+    
+    ;imprima delimitador
+    mov eax, 4
+    mov ebx, [fd]
+    mov ecx, delimitador
+    mov edx, 1
+    int 0x80
+
     ;imprima minuto
     mov eax, 4			
     mov ebx, [fd]
@@ -76,6 +84,12 @@ generadorArchivos:
     mov edx, 1
     int 0x80  
 
+    ;imprima delimitador
+    mov eax, 4
+    mov ebx, [fd]
+    mov ecx, delimitador
+    mov edx, 1
+    int 0x80
 
     ;imprima segundo 
     mov eax, 4			
@@ -83,6 +97,13 @@ generadorArchivos:
     mov ecx, segundo
     mov edx, 1
     int 0x80 
+
+    ;imprima delimitador
+    mov eax, 4
+    mov ebx, [fd]
+    mov ecx, delimitador
+    mov edx, 1
+    int 0x80
 
     ;imprima floats
     _cicloInterno1:
@@ -106,6 +127,13 @@ generadorArchivos:
     mov ecx, valor		;mover a ecx el puntero del valor a escribir
     mov edx, 4			;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			;SYS_INTERRUPT despues de cada escritura
+
+    ;imprima delimitador
+    mov eax, 4
+    mov ebx, [fd]
+    mov ecx, delimitador
+    mov edx, 1
+    int 0x80
     
     dec esi			;decremente el contador
     cmp esi, 0			;si no es igual a 0
