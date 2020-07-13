@@ -7,12 +7,14 @@ unid1 db 'bpm', 0ah, 00h
 divisor db 1.02	    		;variable auxiliar para la division para generar floats
 limiteSuperior1	db 150		;limite superior de rango para valores random
 limiteInferior1 db 40		;limite inferior de rango para valores random
-hora db 1			        ;hora 1
+hora db 1			        ;hora 
 contador dw 300			    ;contador para la cantidad de lecturas a crear
 SECTION .bss
 
 fd RESB 4    	                ;file descriptor
 valor RESB 4                    ;float(4bytes)
+minuto RESB 1
+segundo RESB 1
 
 SECTION .text
 
@@ -55,6 +57,9 @@ generadorArchivos:
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
+    xor eax, eax
+    mov [minuto], eax
+    mov [segundo], eax
 
     _ciclo:
     ;imprima hora
@@ -65,11 +70,19 @@ generadorArchivos:
     int 0x80
    
     ;imprima minuto
-   
+    mov eax, 4			
+    mov ebx, [fd]
+    mov ecx, minuto
+    mov edx, 1
+    int 0x80  
 
 
     ;imprima segundo 
-
+    mov eax, 4			
+    mov ebx, [fd]
+    mov ecx, segundo
+    mov edx, 1
+    int 0x80 
 
     ;imprima floats
     _cicloInterno1:
