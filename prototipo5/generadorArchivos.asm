@@ -9,9 +9,11 @@ limiteSuperior1	db 150		;limite superior de rango para valores random
 limiteInferior1 db 40		;limite inferior de rango para valores random
 
 
+
 hora db 1			;hora 1
 contador dw 300			;contador para la cantidad de lecturas a crear
-
+limiteSuperiorMinSeg db 60 	
+limiteInferiorMinSeg db 0
 SECTION .bss
 
 fd RESB 4    	                ;file descriptor
@@ -60,15 +62,19 @@ generadorArchivos:
     mov eax, 4                  ;SYS_WRITE
     int 0x80
 
+
     _ciclo:
 
     ;imprima hora
     mov eax, 4			
     mov ebx, [fd]
-    mov ecx, [hora]
-    mov edx, 4
+    mov ecx, hora
+    mov edx, 1
+    int 0x80
    
     ;imprima minuto
+   
+
 
     ;imprima segundo 
 
