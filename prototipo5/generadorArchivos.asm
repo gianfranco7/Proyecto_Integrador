@@ -37,6 +37,8 @@ limiteInferior4 dd 120          ;limite inferior de rango para valores random
 limiteSuperior5 dd 100          ;limite superior de rango para valores random
 limiteInferior5 dd 90           ;limite inferior de rango para valores random
 
+limiteTiempoS dd 60
+
 hora db 1			            ;hora 
 contador dw 300			        ;contador para la cantidad de lecturas a crear
 
@@ -46,8 +48,6 @@ fd RESB 4    	                ;file descriptor
 valor RESB 4                    ;float(4bytes)
 minuto RESB 1
 segundo RESB 1
-limiteTiempoI RESB 1
-limiteTiempoS RESB 1
 
 SECTION .text
 
@@ -124,21 +124,13 @@ generadorArchivos:
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-
-    mov eax, [limiteTiempoS]
-    mov eax, 60
-    mov [limiteTiempoS], eax	
-   
-    mov eax, [limiteTiempoI]
-    mov eax, 1
-    mov [limiteTiempoI], eax
-       
+	        
     mov eax, [segundo]
     add eax, 1
     mov [segundo], eax
     cmp eax, [limiteTiempoS]
     je _cambiar1
-    jmp _cicloInterno1
+    jmp _genereRandom
 
     _cambiar1:
     mov eax, 0
@@ -147,19 +139,15 @@ generadorArchivos:
     add ebx, 1
     mov [minuto], ebx
    
-    ;imprima floats
-    _cicloInterno1:
-    rdrand eax			;genera un random en eax
-    cmp eax, [limiteSuperior1]	;compara con limite sup
-    jle	_etiqueta1	        ;si es menor al limite sup
-    jmp _cicloInterno1          ;si no es menor, repita 
-    _etiqueta1:
-    cmp eax, [limiteInferior1]  ;compara con limite inf
-    jge _continuar1             ;si es mayor al limite inf, continue
-    jmp _cicloInterno1          ;si no es mayor, repita
-    
-    _continuar1:
-
+   _genereRandom:
+    ;Genere el random en el rango
+    rdrand eax			            ;genera un random en eax
+    mov ebx, [limiteSuperior1]
+    mov ecx, [limiteInferior1]
+    sub ebx, ecx
+    div ebx
+    add eax, ecx
+    ;Convertir y guardar
     CVTSI2SS xmm0, eax		    	;castea el int a float
     movss xmm1, [divisor]	    	;mover el divisor a xmm1
     divss xmm0, xmm1		    	;divide para generar un float con decimales diferentes de 0
@@ -189,7 +177,7 @@ generadorArchivos:
     mov esi, [contador]
     mov [fd], eax               ;eax tiene el file descriptor
     
-    mov edx, 29                 ;tamano a escribir
+    mov edx, 29                ;tamano a escribir
     mov ecx, head2              ;mover puntero de valor
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
@@ -200,11 +188,12 @@ generadorArchivos:
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
-
-    xor eax, eax
-    mov [minuto], eax
+ 
+    
+    mov eax, 1
     mov [segundo], eax
-
+    mov [minuto], eax
+    
     _ciclo2:
     ;imprima hora
     mov eax, 4			
@@ -212,7 +201,7 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-    
+
     ;imprima minuto
     mov eax, 4			
     mov ebx, [fd]
@@ -226,46 +215,44 @@ generadorArchivos:
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-    
+	        
     mov eax, [segundo]
-    inc eax
+    add eax, 1
+    mov [segundo], eax
     cmp eax, [limiteTiempoS]
     je _cambiar2
-    jmp _cicloInterno2
+    jmp _genereRandom2
 
     _cambiar2:
     mov eax, 0
     mov [segundo], eax
     mov ebx, [minuto]
-    inc ebx
+    add ebx, 1
     mov [minuto], ebx
-    
-    ;imprima floats
-    _cicloInterno2:
-    rdrand eax			        ;genera un random en eax
-    cmp eax, [limiteSuperior2]	;compara con limite sup
-    jle	_etiqueta2	            ;si es menor al limite sup
-    jmp _cicloInterno2          ;si no es menor, repita 
-    _etiqueta2:
-    cmp eax, [limiteInferior2]  ;compara con limite inf
-    jge _continuar2             ;si es mayor al limite inf, continue
-    jmp _cicloInterno2          ;si no es mayor, repita
-    
-    _continuar2:
-
-    CVTSI2SS xmm0, eax		    ;castea el int a float
-    movsd xmm1, [divisor]	    ;mover el divisor a xmm1
-    divsd xmm0, xmm1		    ;divide para generar un float con decimales diferentes de 0
-    movsd [valor], xmm0		    ;resultado queda en valor
-    mov eax, 4			        ;SYS_WRITE
+   
+   _genereRandom2:
+    ;Genere el random en el rango
+    rdrand eax			            ;genera un random en eax
+    mov ebx, [limiteSuperior2]
+    mov ecx, [limiteInferior2]
+    sub ebx, ecx
+    div ebx
+    add eax, ecx
+    ;Convertir y guardar
+    CVTSI2SS xmm0, eax		    	;castea el int a float
+    movss xmm1, [divisor]	    	;mover el divisor a xmm1
+    divss xmm0, xmm1		    	;divide para generar un float con decimales diferentes de 0
+    movss [valor], xmm0		    	;resultado queda en valor
+    ;escritura
+    mov eax, 4		       	    	;SYS_WRITE
     mov ebx, [fd]		        ;file descriptor en ebx para que sepa donde escribir
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
     
-    dec esi			            ;decremente el contador
-    cmp esi, 0			        ;si no es igual a 0
-    jne _ciclo			        ;continue con el ciclo hasta que sea 0
+    dec esi			        ;decremente el contador
+    cmp esi, 0	        		;si no es igual a 0
+    jne _ciclo2			        ;continue con el ciclo hasta que sea 0
 		
     mov eax, 6                  ;SYS_CLOSE
     mov ebx, [fd]               ;le da el file descriptor para que sepa que file cerrar
@@ -281,7 +268,7 @@ generadorArchivos:
     mov esi, [contador]
     mov [fd], eax               ;eax tiene el file descriptor
     
-    mov edx, 28                 ;tamano a escribir
+    mov edx, 28                ;tamano a escribir
     mov ecx, head3              ;mover puntero de valor
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
@@ -292,11 +279,12 @@ generadorArchivos:
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
-
-    xor eax, eax
-    mov [minuto], eax
+ 
+    
+    mov eax, 1
     mov [segundo], eax
-
+    mov [minuto], eax
+    
     _ciclo3:
     ;imprima hora
     mov eax, 4			
@@ -304,7 +292,6 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-
 
     ;imprima minuto
     mov eax, 4			
@@ -319,52 +306,50 @@ generadorArchivos:
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-    
+	        
     mov eax, [segundo]
-    inc eax
+    add eax, 1
+    mov [segundo], eax
     cmp eax, [limiteTiempoS]
     je _cambiar3
-    jmp _cicloInterno3
+    jmp _genereRandom3
 
     _cambiar3:
     mov eax, 0
     mov [segundo], eax
     mov ebx, [minuto]
-    inc ebx
+    add ebx, 1
     mov [minuto], ebx
-    
-    ;imprima floats
-    _cicloInterno3:
-    rdrand eax			        ;genera un random en eax
-    cmp eax, [limiteSuperior3]	;compara con limite sup
-    jle	_etiqueta3	            ;si es menor al limite sup
-    jmp _cicloInterno3          ;si no es menor, repita 
-    _etiqueta3:
-    cmp eax, [limiteInferior3]  ;compara con limite inf
-    jge _continuar3             ;si es mayor al limite inf, continue
-    jmp _cicloInterno3          ;si no es mayor, repita
-    
-    _continuar3:
-
-    CVTSI2SS xmm0, eax		    ;castea el int a float
-    movsd xmm1, [divisor]	    ;mover el divisor a xmm1
-    divsd xmm0, xmm1		    ;divide para generar un float con decimales diferentes de 0
-    movsd [valor], xmm0		    ;resultado queda en valor
-    mov eax, 4			        ;SYS_WRITE
+   
+   _genereRandom3:
+    ;Genere el random en el rango
+    rdrand eax			            ;genera un random en eax
+    mov ebx, [limiteSuperior3]
+    mov ecx, [limiteInferior3]
+    sub ebx, ecx
+    div ebx
+    add eax, ecx
+    ;Convertir y guardar
+    CVTSI2SS xmm0, eax		    	;castea el int a float
+    movss xmm1, [divisor]	    	;mover el divisor a xmm1
+    divss xmm0, xmm1		    	;divide para generar un float con decimales diferentes de 0
+    movss [valor], xmm0		    	;resultado queda en valor
+    ;escritura
+    mov eax, 4		       	    	;SYS_WRITE
     mov ebx, [fd]		        ;file descriptor en ebx para que sepa donde escribir
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
     
-    dec esi			            ;decremente el contador
-    cmp esi, 0			        ;si no es igual a 0
+    dec esi			        ;decremente el contador
+    cmp esi, 0	        		;si no es igual a 0
     jne _ciclo3			        ;continue con el ciclo hasta que sea 0
 		
     mov eax, 6                  ;SYS_CLOSE
     mov ebx, [fd]               ;le da el file descriptor para que sepa que file cerrar
 	    
     jmp _final                  ;termina la funcion
-	
+
     _sensorPresionR:           
     mov eax, 8
     mov ebx, nom4               ;darle nombre al archivo
@@ -374,7 +359,7 @@ generadorArchivos:
     mov esi, [contador]
     mov [fd], eax               ;eax tiene el file descriptor
     
-    mov edx, 28                 ;tamano a escribir
+    mov edx, 28                ;tamano a escribir
     mov ecx, head4              ;mover puntero de valor
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
@@ -385,11 +370,12 @@ generadorArchivos:
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
-
-    xor eax, eax
-    mov [minuto], eax
+ 
+    
+    mov eax, 1
     mov [segundo], eax
-
+    mov [minuto], eax
+    
     _ciclo4:
     ;imprima hora
     mov eax, 4			
@@ -397,7 +383,6 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-
 
     ;imprima minuto
     mov eax, 4			
@@ -412,47 +397,43 @@ generadorArchivos:
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-
-    
+	        
     mov eax, [segundo]
-    inc eax
+    add eax, 1
+    mov [segundo], eax
     cmp eax, [limiteTiempoS]
     je _cambiar4
-    jmp _cicloInterno4
+    jmp _genereRandom4
 
     _cambiar4:
     mov eax, 0
     mov [segundo], eax
     mov ebx, [minuto]
-    inc ebx
+    add ebx, 1
     mov [minuto], ebx
-    
-    ;imprima floats
-    _cicloInterno4:
-    rdrand eax			        ;genera un random en eax
-    cmp eax, [limiteSuperior4]	;compara con limite sup
-    jle	_etiqueta4	            ;si es menor al limite sup
-    jmp _cicloInterno4          ;si no es menor, repita 
-    _etiqueta4:
-    cmp eax, [limiteInferior4]  ;compara con limite inf
-    jge _continuar4             ;si es mayor al limite inf, continue
-    jmp _cicloInterno4          ;si no es mayor, repita
-    
-    _continuar4:
-
-    CVTSI2SS xmm0, eax		    ;castea el int a float
-    movsd xmm1, [divisor]	    ;mover el divisor a xmm1
-    divsd xmm0, xmm1		    ;divide para generar un float con decimales diferentes de 0
-    movsd [valor], xmm0		    ;resultado queda en valor
-    mov eax, 4			        ;SYS_WRITE
+   
+   _genereRandom4:
+    ;Genere el random en el rango
+    rdrand eax			            ;genera un random en eax
+    mov ebx, [limiteSuperior4]
+    mov ecx, [limiteInferior4]
+    sub ebx, ecx
+    div ebx
+    add eax, ecx
+    ;Convertir y guardar
+    CVTSI2SS xmm0, eax		    	;castea el int a float
+    movss xmm1, [divisor]	    	;mover el divisor a xmm1
+    divss xmm0, xmm1		    	;divide para generar un float con decimales diferentes de 0
+    movss [valor], xmm0		    	;resultado queda en valor
+    ;escritura
+    mov eax, 4		       	    	;SYS_WRITE
     mov ebx, [fd]		        ;file descriptor en ebx para que sepa donde escribir
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
-
-       
-    dec esi			            ;decremente el contador
-    cmp esi, 0			        ;si no es igual a 0
+    
+    dec esi			        ;decremente el contador
+    cmp esi, 0	        		;si no es igual a 0
     jne _ciclo4			        ;continue con el ciclo hasta que sea 0
 		
     mov eax, 6                  ;SYS_CLOSE
@@ -469,22 +450,23 @@ generadorArchivos:
     mov esi, [contador]
     mov [fd], eax               ;eax tiene el file descriptor
     
-    mov edx, 32                 ;tamano a escribir
+    mov edx, 32               ;tamano a escribir
     mov ecx, head5              ;mover puntero de valor
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
     
-    mov edx, 5                 ;tamano a escribir
+    mov edx, 5                  ;tamano a escribir
     mov ecx, unid5              ;mover puntero de valor
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
-
-    xor eax, eax
-    mov [minuto], eax
+ 
+    
+    mov eax, 1
     mov [segundo], eax
-
+    mov [minuto], eax
+    
     _ciclo5:
     ;imprima hora
     mov eax, 4			
@@ -492,7 +474,6 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-   
 
     ;imprima minuto
     mov eax, 4			
@@ -507,47 +488,43 @@ generadorArchivos:
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-
-    
+	        
     mov eax, [segundo]
-    inc eax
+    add eax, 1
+    mov [segundo], eax
     cmp eax, [limiteTiempoS]
     je _cambiar5
-    jmp _cicloInterno5
+    jmp _genereRandom5
 
     _cambiar5:
     mov eax, 0
     mov [segundo], eax
     mov ebx, [minuto]
-    inc ebx
+    add ebx, 1
     mov [minuto], ebx
-    
-    ;imprima floats
-    _cicloInterno5:
-    rdrand eax			        ;genera un random en eax
-    cmp eax, [limiteSuperior5]	;compara con limite sup
-    jle	_etiqueta5	            ;si es menor al limite sup
-    jmp _cicloInterno5          ;si no es menor, repita 
-    _etiqueta5:
-    cmp eax, [limiteInferior5]  ;compara con limite inf
-    jge _continuar5             ;si es mayor al limite inf, continue
-    jmp _cicloInterno5          ;si no es mayor, repita
-    
-    _continuar5:
-
-    CVTSI2SS xmm0, eax		    ;castea el int a float
-    movsd xmm1, [divisor]	    ;mover el divisor a xmm1
-    divsd xmm0, xmm1		    ;divide para generar un float con decimales diferentes de 0
-    movsd [valor], xmm0	    	;resultado queda en valor
-    mov eax, 4			        ;SYS_WRITE
+   
+   _genereRandom5:
+    ;Genere el random en el rango
+    rdrand eax			            ;genera un random en eax
+    mov ebx, [limiteSuperior5]
+    mov ecx, [limiteInferior5]
+    sub ebx, ecx
+    div ebx
+    add eax, ecx
+    ;Convertir y guardar
+    CVTSI2SS xmm0, eax		    	;castea el int a float
+    movss xmm1, [divisor]	    	;mover el divisor a xmm1
+    divss xmm0, xmm1		    	;divide para generar un float con decimales diferentes de 0
+    movss [valor], xmm0		    	;resultado queda en valor
+    ;escritura
+    mov eax, 4		       	    	;SYS_WRITE
     mov ebx, [fd]		        ;file descriptor en ebx para que sepa donde escribir
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
-
     
-    dec esi			            ;decremente el contador
-    cmp esi, 0			        ;si no es igual a 0
+    dec esi			        ;decremente el contador
+    cmp esi, 0	        		;si no es igual a 0
     jne _ciclo5			        ;continue con el ciclo hasta que sea 0
 		
     mov eax, 6                  ;SYS_CLOSE
