@@ -3,8 +3,8 @@ SECTION .data
 nombreArchivo db 'sensorPulso.txt', 00h
 delimitador db '\0', 00h
 
-;Sensor de pulso       16 con el cambio de linea
-;bpm                   4 con el cambio de linea
+;Sensor de pulso       16bytes con el cambio de linea
+;bpm                   4bytes con el cambio de linea
 
 
 SECTION .bss
@@ -13,10 +13,10 @@ fileDescriptor RESB 4		;para guardar el file descriptor de eax
 nombre RESB 50			
 unit RESB 5
 
-bufferHora RESB 1
-bufferMin RESB 1
-bufferSeg RESB 1
-bufferLect RESB 4
+global bufferHora RESB 1
+global bufferMin RESB 1
+global bufferSeg RESB 1
+global bufferLect RESB 4
 
 SECTION .text
 
@@ -74,33 +74,8 @@ lectorPulso:
     mov edx, 4                  ;size
     int 0x80
 
-
-	;IMPRIMIR
-
-    
-    mov esi, [bufferHora]       ;mover a esi la hora
-
-    atoi:
-    xor ebx, ebx
-    mov bl, [esi+ecx]
-    cmp bl, 48    ;48 = '0'
-    jl finAtoI
-    cmp bl, 57    ;57 = '9'
-    jg finAtoI
-
-    sub bl, 48
-    add eax, ebx
-    mov ebx, 10
-    mul ebx
-    inc ecx
-    jmp atoi
-
-    finAtoI:
-    mov ebx, 10
-    div ebx
-    
-    mov [bufferHora], ebx
-
+    ;IMPRIMIR
+ 
     mov eax, 4			;SYS OUT
     mov ebx, 1			;ni idea
     mov ecx, bufferHora		;output buffer
@@ -125,6 +100,16 @@ lectorPulso:
     mov edx, 4                  ;size
     int 0x80
 
+
+
+
+    ;mov [bufferHora], [ebp+8]
+    ;mov eax, [bufferHora]
+    ;ebp+12
+    ;ebp+16
+    ;ebp+20
+
+;
     ;epilogo
     pop esi
     pop edx

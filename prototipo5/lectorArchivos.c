@@ -1,8 +1,12 @@
 #include <stdio.h>
 
 extern void lectorPulso();
+extern char bufferHora;
+extern char bufferMin;
+extern char bufferSeg;
+extern char bufferLect;
 int main(){
-/*	
+
 	//leer linea 1
 	FILE* ptr = fopen("sensorPulso.txt","r");
 	char nombreSensor[50];				
@@ -14,9 +18,7 @@ int main(){
     	fgets(unidades, 50, ptr);
 	printf("%s", unidades);
 	fclose(ptr);
-*/        
-
-	/*
+/*
  	int horas[300];
 	int minutos[300];
 	int segundos[300];
@@ -30,7 +32,22 @@ int main(){
 		printf("\n");
 	}
 	printf("\n");
-	*/        
-	lectorPulso();
+*/
+	int horas[300];
+	int minutos[300];
+	int segundos[300];
+	double lecturas[30];
+	for(int i = 0; i< 300; i++){
+		horas[i] = bufferHora;
+		minutos[i] = bufferMin;
+		segundos[i] = bufferSeg;
+		lecturas[i] = bufferLect;
+	}
+
+	/*
+        int hora =0;
+	lector(&hora, &min, &seg, &lect);
+	*/
+
 	return 0;
 }

@@ -20,24 +20,22 @@ nom5 db './sensorSaturacionOxigeno.txt', 00h
 head5 db 'Sensor de saturacion de oxigeno', 0ah, 00h
 unid5 db 'SaO2', 0ah, 00h
 
-delimitador db '\0', 00h
+divisor dd 1.02	 	           ;variable auxiliar para la division para generar floats
 
-divisor db 1.02	    		    ;variable auxiliar para la division para generar floats
+limiteSuperior1	dd 150		    ;limite superior de rango para valores random
+limiteInferior1 dd 40		    ;limite inferior de rango para valores random
 
-limiteSuperior1	db 150		    ;limite superior de rango para valores random
-limiteInferior1 db 40		    ;limite inferior de rango para valores random
+limiteSuperior2 dd 120          ;limite superior de rango para valores random
+limiteInferior2 dd 80           ;limite inferior de rango para valores random
 
-limiteSuperior2 db 120          ;limite superior de rango para valores random
-limiteInferior2 db 80           ;limite inferior de rango para valores random
+limiteSuperior3 dd 180          ;limite superior de rango para valores random
+limiteInferior3 dd 120          ;limite inferior de rango para valores random
 
-limiteSuperior3 db 180          ;limite superior de rango para valores random
-limiteInferior3 db 120          ;limite inferior de rango para valores random
+limiteSuperior4 dd 20           ;limite superior de rango para valores random
+limiteInferior4 dd 120          ;limite inferior de rango para valores random
 
-limiteSuperior4 db 20           ;limite superior de rango para valores random
-limiteInferior4 db 120          ;limite inferior de rango para valores random
-
-limiteSuperior5 db 100          ;limite superior de rango para valores random
-limiteInferior5 db 90           ;limite inferior de rango para valores random
+limiteSuperior5 dd 100          ;limite superior de rango para valores random
+limiteInferior5 dd 90           ;limite inferior de rango para valores random
 
 hora db 1			            ;hora 
 contador dw 300			        ;contador para la cantidad de lecturas a crear
@@ -48,8 +46,8 @@ fd RESB 4    	                ;file descriptor
 valor RESB 4                    ;float(4bytes)
 minuto RESB 1
 segundo RESB 1
-limiteTiempoS RESB 1
 limiteTiempoI RESB 1
+limiteTiempoS RESB 1
 
 SECTION .text
 
@@ -65,7 +63,7 @@ generadorArchivos:
     push ecx
     push edx
     push esi
-
+    
     ;crear archivo
     mov edx, [ebp+8]            ;parametro tipoArchivo
     cmp edx, 1
@@ -99,23 +97,17 @@ generadorArchivos:
     mov ebx, [fd]               ;le dice donde escribir
     mov eax, 4                  ;SYS_WRITE
     int 0x80
-
-    xor eax, eax
-    mov [minuto], eax
+ 
+    
+    mov eax, 1
     mov [segundo], eax
-
+    mov [minuto], eax
+    
     _ciclo:
     ;imprima hora
     mov eax, 4			
     mov ebx, [fd]
     mov ecx, hora
-    mov edx, 1
-    int 0x80
-    
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
     mov edx, 1
     int 0x80
 
@@ -126,13 +118,6 @@ generadorArchivos:
     mov edx, 1
     int 0x80  
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-
     ;imprima segundo 
     mov eax, 4			
     mov ebx, [fd]
@@ -140,15 +125,17 @@ generadorArchivos:
     mov edx, 1
     int 0x80 
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-    
+    mov eax, [limiteTiempoS]
+    mov eax, 60
+    mov [limiteTiempoS], eax	
+   
+    mov eax, [limiteTiempoI]
+    mov eax, 1
+    mov [limiteTiempoI], eax
+       
     mov eax, [segundo]
-    inc eax
+    add eax, 1
+    mov [segundo], eax
     cmp eax, [limiteTiempoS]
     je _cambiar1
     jmp _cicloInterno1
@@ -157,14 +144,14 @@ generadorArchivos:
     mov eax, 0
     mov [segundo], eax
     mov ebx, [minuto]
-    inc ebx
+    add ebx, 1
     mov [minuto], ebx
-    
+   
     ;imprima floats
     _cicloInterno1:
-    rdrand eax			        ;genera un random en eax
+    rdrand eax			;genera un random en eax
     cmp eax, [limiteSuperior1]	;compara con limite sup
-    jle	_etiqueta1	            ;si es menor al limite sup
+    jle	_etiqueta1	        ;si es menor al limite sup
     jmp _cicloInterno1          ;si no es menor, repita 
     _etiqueta1:
     cmp eax, [limiteInferior1]  ;compara con limite inf
@@ -173,24 +160,18 @@ generadorArchivos:
     
     _continuar1:
 
-    CVTSI2SS xmm0, eax		    ;castea el int a float
-    movsd xmm1, [divisor]	    ;mover el divisor a xmm1
-    divsd xmm0, xmm1		    ;divide para generar un float con decimales diferentes de 0
-    movsd [valor], xmm0		    ;resultado queda en valor
-    mov eax, 4		       	    ;SYS_WRITE
+    CVTSI2SS xmm0, eax		    	;castea el int a float
+    movss xmm1, [divisor]	    	;mover el divisor a xmm1
+    divss xmm0, xmm1		    	;divide para generar un float con decimales diferentes de 0
+    movss [valor], xmm0		    	;resultado queda en valor
+    ;escritura
+    mov eax, 4		       	    	;SYS_WRITE
     mov ebx, [fd]		        ;file descriptor en ebx para que sepa donde escribir
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
-
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
-    dec esi			            ;decremente el contador
+    dec esi			        ;decremente el contador
     cmp esi, 0	        		;si no es igual a 0
     jne _ciclo			        ;continue con el ciclo hasta que sea 0
 		
@@ -232,13 +213,6 @@ generadorArchivos:
     mov edx, 1
     int 0x80
     
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-
     ;imprima minuto
     mov eax, 4			
     mov ebx, [fd]
@@ -246,26 +220,12 @@ generadorArchivos:
     mov edx, 1
     int 0x80  
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-
     ;imprima segundo 
     mov eax, 4			
     mov ebx, [fd]
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     mov eax, [segundo]
     inc eax
@@ -302,13 +262,6 @@ generadorArchivos:
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
-
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     dec esi			            ;decremente el contador
     cmp esi, 0			        ;si no es igual a 0
@@ -351,13 +304,7 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-    
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
+
 
     ;imprima minuto
     mov eax, 4			
@@ -366,26 +313,12 @@ generadorArchivos:
     mov edx, 1
     int 0x80  
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-
     ;imprima segundo 
     mov eax, 4			
     mov ebx, [fd]
     mov ecx, segundo
     mov edx, 1
     int 0x80 
-
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     mov eax, [segundo]
     inc eax
@@ -422,13 +355,6 @@ generadorArchivos:
     mov ecx, valor		        ;mover a ecx el puntero del valor a escribir
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
-
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     dec esi			            ;decremente el contador
     cmp esi, 0			        ;si no es igual a 0
@@ -471,13 +397,7 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-    
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
+
 
     ;imprima minuto
     mov eax, 4			
@@ -486,13 +406,6 @@ generadorArchivos:
     mov edx, 1
     int 0x80  
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-
     ;imprima segundo 
     mov eax, 4			
     mov ebx, [fd]
@@ -500,12 +413,6 @@ generadorArchivos:
     mov edx, 1
     int 0x80 
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     mov eax, [segundo]
     inc eax
@@ -543,13 +450,7 @@ generadorArchivos:
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-    
+       
     dec esi			            ;decremente el contador
     cmp esi, 0			        ;si no es igual a 0
     jne _ciclo4			        ;continue con el ciclo hasta que sea 0
@@ -591,13 +492,7 @@ generadorArchivos:
     mov ecx, hora
     mov edx, 1
     int 0x80
-    
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
+   
 
     ;imprima minuto
     mov eax, 4			
@@ -606,13 +501,6 @@ generadorArchivos:
     mov edx, 1
     int 0x80  
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
-
     ;imprima segundo 
     mov eax, 4			
     mov ebx, [fd]
@@ -620,12 +508,6 @@ generadorArchivos:
     mov edx, 1
     int 0x80 
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     mov eax, [segundo]
     inc eax
@@ -663,12 +545,6 @@ generadorArchivos:
     mov edx, 4			        ;mover a edx el buffer size a escribir (el tamano de valor)
     int 0x80			        ;SYS_INTERRUPT despues de cada escritura
 
-    ;imprima delimitador
-    mov eax, 4
-    mov ebx, [fd]
-    mov ecx, delimitador
-    mov edx, 1
-    int 0x80
     
     dec esi			            ;decremente el contador
     cmp esi, 0			        ;si no es igual a 0
