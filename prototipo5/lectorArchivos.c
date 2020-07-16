@@ -28,8 +28,8 @@ int main(){
 		minutos[i] = minuto;
 		segundos[i] = segundo;
 		lecturas[i] = lectura;
-		imprimir para efectos de pruebas
-		printf("Hora: %d Minuto: %d Segundo %d Lectura: %f\n", hora, minuto, segundo, lectura);
+		//imprimir para efectos de pruebas
+		//printf("Hora: %d Minuto: %d Segundo %d Lectura: %f\n", hora, minuto, segundo, lectura);
 	}
 	return 0;
 }
